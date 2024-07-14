@@ -60,11 +60,12 @@ final public class Gradient {
     inAcquisition = true;
 
     graph.clear();
+    graph.setNameXAUFS(abs);
     menu.setVisible(false);
     graph.setVisible(true);
 
     timer = new Timer();
-    arduino = new Arduino(this, port, fe);
+    arduino = new Arduino(this, port, fe, abs);
     timer.start();
 
     if (!arduino.tryConnect()) {
@@ -172,7 +173,7 @@ final public class Gradient {
     }
     lines.add("");
 
-    lines.add("Données (s / 2AUFS / XAUFS) :");
+    lines.add("Données (s / 2AUFS / " + absorbancePe + "AUFS) :");
     for (int i = 0; i < datas.size(); i++) {
       lines.add(datas.get(i).toString());
     }

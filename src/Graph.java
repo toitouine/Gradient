@@ -41,6 +41,10 @@ public class Graph {
     jpanel.add(panel, BorderLayout.CENTER);
   }
 
+  public void setSeries2Name(String str) {
+    series2.setKey(str);
+  }
+
   public void setStrokeWeight(float sw) {
     strokeWeight = sw;
     chart.getXYPlot().getRenderer().setSeriesStroke(0, new BasicStroke(strokeWeight));

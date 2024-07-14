@@ -26,6 +26,10 @@ public class GraphFrame extends AppFrame {
     setCloseConfirmation();
   }
 
+  public void setNameXAUFS(double abs) {
+    graph.setSeries2Name(abs + "AUFS");
+  }
+
   @Override
   public void setVisible(boolean v) {
     super.setVisible(v);

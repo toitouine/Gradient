@@ -6,16 +6,22 @@ final public class Arduino {
   final private Gradient application;
   final public SerialPort port;
   final public int frequence;
+  final public double pleineEchelle;
 
-  public Arduino(Gradient app, SerialPort p, int fe) {
+  public Arduino(Gradient app, SerialPort p, int fe, double ape) {
     application = app;
     port = p;
     frequence = fe;
+    pleineEchelle = ape;
     port.setBaudRate(115200);
   }
 
   public boolean tryConnect() {
     return Serial.open(port);
+  }
+
+  private double map(double value, double min1, double max1, double min2, double max2) {
+    return (value - min1) * (max2 - min2) / (max1 - min1) + min2;
   }
 
   public void startAcquisition() {
@@ -32,8 +38,11 @@ final public class Arduino {
         if (str.charAt(0) == 'm') application.addMark(Double.parseDouble(str.substring(1)));
         else if (str.charAt(0) == 'd') {
           String data = str.substring(1);
-          double valAbs2 = Double.parseDouble(data.split("/")[0]);
-          double valAbsX = Double.parseDouble(data.split("/")[1]);
+          double val2 = Double.parseDouble(data.split("/")[0]);
+          double valX = Double.parseDouble(data.split("/")[1]);
+          double maxValue = Math.pow(2, 16) - 1;
+          double valAbs2 = map(val2, 0, maxValue/3.3d, 0, 2);
+          double valAbsX = map(valX, 0, maxValue/3.3d, 0, pleineEchelle);
           application.acquisition(valAbs2, valAbsX);
         }
       }
