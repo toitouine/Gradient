@@ -1,0 +1,6 @@
+p        : ping à la carte (Gradient)
+r        : réponse au ping (Arduino)
+s[fe]    : démarrer l'acquisition et fréquence d'échantillonnage (Gradient)
+e        : terminer l'acquisition (Gradient)
+AD12 d[2][X]  : données à acquérir (Arduino)
+AD12 m[df]    : mark sur le graphique avec la différence de temps (Arduino)
