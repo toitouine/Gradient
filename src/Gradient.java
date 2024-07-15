@@ -27,6 +27,8 @@ final public class Gradient {
   private Arduino arduino;
   private File saveFolder;
   private double absorbancePe;
+  private int numberOfTubes = 0;
+  private double lastTube = 0;
   private ArrayList<Data> datas;
   private ArrayList<Double> markerTimes;
   private double lastSauvegarde = 0;
@@ -63,6 +65,8 @@ final public class Gradient {
     absorbancePe = abs;
     saveFolder = folder;
     inAcquisition = true;
+    numberOfTubes = 0;
+    lastTube = 0;
 
     graph.clear();
     graph.setNameXAUFS(abs);
@@ -112,6 +116,8 @@ final public class Gradient {
     absorbancePe = -1;
     paused = false;
     lastSauvegarde = 0;
+    numberOfTubes = 0;
+    lastTube = 0;
     startTime = null;
     saveFolder = null;
     inAcquisition = false;
@@ -120,8 +126,14 @@ final public class Gradient {
   public void addMark(double retardMs) {
     double time = timer.getTimeMs()/1000d;
     double retard = retardMs/1000d;
-    graph.addMark(time - retard);
-    markerTimes.add(time - retard);
+    double value = time - retard;
+    if (numberOfTubes != 0) {
+      graph.addTextMark((value + lastTube)/2d, "Tube " + numberOfTubes);
+    }
+    graph.addMark(value);
+    markerTimes.add(value);
+    numberOfTubes++;
+    lastTube = value;
     trySave();
   }
 
@@ -139,16 +151,24 @@ final public class Gradient {
     if (!inAcquisition) return;
 
     // Demande le chemin vers le csv
-    JFileChooser folderChooser = new JFileChooser();
-    folderChooser.setCurrentDirectory(saveFolder);
-    int response = folderChooser.showSaveDialog(null);
+    String fullPath = "";
+    do {
+      JFileChooser folderChooser = new JFileChooser();
+      folderChooser.setCurrentDirectory(saveFolder);
+      int response = folderChooser.showSaveDialog(null);
 
-    if (response != JFileChooser.APPROVE_OPTION) return;
+      if (response != JFileChooser.APPROVE_OPTION) return;
 
-    String fullPath = folderChooser.getSelectedFile().getAbsolutePath();
-    if (!fullPath.endsWith(".csv")) {
-      fullPath += ".csv";
-    }
+      fullPath = folderChooser.getSelectedFile().getAbsolutePath();
+
+      if (!fullPath.endsWith(".csv")) {
+        fullPath += ".csv";
+      }
+
+      if (Files.exists(Paths.get(fullPath))) {
+        JOptionPane.showMessageDialog(null, "Ce fichier existe déjà.", "Erreur", JOptionPane.ERROR_MESSAGE);
+      }
+    } while (Files.exists(Paths.get(fullPath)));
 
     // Copie les données
     ArrayList<Data> datasCopy = new ArrayList<Data>();
@@ -185,7 +205,7 @@ final public class Gradient {
       PrintWriter pw = new PrintWriter(output);
       for (String[] entry : entries) {
         List<String> entryList = Arrays.asList(entry);
-        String line = entryList.stream().collect(Collectors.joining(","));
+        String line = entryList.stream().collect(Collectors.joining(";"));
         pw.println(line);
       }
       pw.close();

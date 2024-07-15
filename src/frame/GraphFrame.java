@@ -49,6 +49,10 @@ public class GraphFrame extends AppFrame {
     graph.addMark(x);
   }
 
+  public void addTextMark(double x, String text) {
+    graph.addTextMark(x, text);
+  }
+
   private void setCloseConfirmation() {
     addWindowListener(new WindowAdapter() {
       @Override

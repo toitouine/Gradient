@@ -4,6 +4,10 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.TextAnchor;
+import org.jfree.ui.Layer;
+import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import javax.swing.JPanel;
@@ -11,6 +15,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.BasicStroke;
 import java.awt.Rectangle;
+import java.awt.Font;
+import java.util.Collection;
 
 public class Graph {
 
@@ -89,6 +95,18 @@ public class Graph {
 
   public void addMark(double x) {
     addMark(x, markerColor);
+  }
+
+  public void addTextMark(double x, String text) {
+    ValueMarker marker = new ValueMarker(x);
+    marker.setPaint(markerColor);
+    marker.setLabel(text);
+    marker.setLabelAnchor(RectangleAnchor.CENTER);
+    marker.setLabelTextAnchor(TextAnchor.CENTER);
+    marker.setLabelFont(new Font("", Font.PLAIN, 16));
+    marker.setStroke(new BasicStroke(0));
+    marker.setPaint(chart.getBackgroundPaint());
+    chart.getXYPlot().addDomainMarker(marker);
   }
 
   public JPanel getPanel() {
