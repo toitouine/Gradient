@@ -58,6 +58,10 @@ final public class Arduino {
   }
 
   public void sendStart() {
+    // S'assure que la carte soit en WAITING
+    Serial.write(port, "e");
+
+    // Démarre l'acquisition avec la bonne fréquence
     String msg = "s" + frequence;
     Serial.write(port, msg);
   }

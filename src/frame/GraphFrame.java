@@ -16,6 +16,7 @@ public class GraphFrame extends AppFrame {
   private Graph graph;
   private JButton menuButton;
   private JButton stopButton;
+  private JButton toggle2Button;
 
   public GraphFrame(Gradient app) {
     super(app, "Acquisition");
@@ -79,10 +80,19 @@ public class GraphFrame extends AppFrame {
     updateButtons();
   }
 
+  private void toggle2AUFS() {
+    if (graph.isSeriesShowed(0)) graph.hideSeries(0);
+    else graph.showSeries(0);
+    updateButtons();
+  }
+
   private void updateButtons() {
     boolean paused = application.acquisitionPaused();
     menuButton.setEnabled(paused);
     stopButton.setText((paused ? "Reprendre" : "Suspendre") + " l'acquisition");
+
+    boolean is2Displayed = graph.isSeriesShowed(0);
+    toggle2Button.setText((is2Displayed ? "Masquer" : "Afficher") + " 2AUFS");
   }
 
   private void initComponents() {
@@ -126,6 +136,16 @@ public class GraphFrame extends AppFrame {
     gbc.gridy = 0;
     gbc.anchor = GridBagConstraints.EAST;
     top.add(exportButton, gbc);
+
+    toggle2Button = new JButton("Masquer 2AUFS");
+    toggle2Button.setFocusable(false);
+    toggle2Button.addActionListener(e -> toggle2AUFS());
+    toggle2Button.setMargin(new Insets(5, 5, 5, 5));
+    toggle2Button.setFont(new Font("", Font.PLAIN, 16));
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.EAST;
+    top.add(toggle2Button, gbc);
 
     add(top, BorderLayout.NORTH);
     add(graph.getPanel(), BorderLayout.CENTER);

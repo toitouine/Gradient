@@ -39,6 +39,24 @@ public class Graph {
     jpanel = new JPanel();
     jpanel.setLayout(new BorderLayout());
     jpanel.add(panel, BorderLayout.CENTER);
+
+    showSeries(0);
+    showSeries(1);
+  }
+
+  public boolean isSeriesShowed(int index) {
+    if (index != 0 && index != 1) return false;
+    return chart.getXYPlot().getRenderer().isSeriesVisible(index);
+  }
+
+  public void showSeries(int index) {
+    if (index != 0 && index != 1) return;
+    chart.getXYPlot().getRenderer().setSeriesVisible(index, true);
+  }
+
+  public void hideSeries(int index) {
+    if (index != 0 && index != 1) return;
+    chart.getXYPlot().getRenderer().setSeriesVisible(index, false);
   }
 
   public void setSeries2Name(String str) {

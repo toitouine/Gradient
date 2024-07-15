@@ -3,7 +3,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+import java.util.Arrays;
 import java.io.File;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.nio.charset.StandardCharsets;
@@ -133,6 +138,7 @@ final public class Gradient {
   public void saveToCSV() {
     if (!inAcquisition) return;
 
+    // Demande le chemin vers le csv
     JFileChooser folderChooser = new JFileChooser();
     folderChooser.setCurrentDirectory(saveFolder);
     int response = folderChooser.showSaveDialog(null);
@@ -144,7 +150,51 @@ final public class Gradient {
       fullPath += ".csv";
     }
 
-    System.out.println("TODO");
+    // Copie les données
+    ArrayList<Data> datasCopy = new ArrayList<Data>();
+    ArrayList<Double> markersCopy = new ArrayList<Double>();
+    datasCopy.addAll(datas);
+    markersCopy.addAll(markerTimes);
+
+    // Prépare et trie les données
+    ArrayList<String[]> entries = new ArrayList<String[]>();
+
+    for (Data data : datasCopy) {
+      String[] entry = {String.valueOf(data.time), String.valueOf(data.valueAbs2), String.valueOf(data.valueAbsX), "non"};
+      entries.add(entry);
+    }
+    for (int i = 0; i < markersCopy.size(); i++) {
+      String[] entry = {String.valueOf(markersCopy.get(i)), "", "", "oui"};
+      entries.add(entry);
+    }
+
+    Collections.sort(entries, new Comparator<String[]>() {
+      @Override
+      public int compare(String[] arr1, String[] arr2) {
+        return Double.valueOf(arr1[0]).compareTo(Double.valueOf(arr2[0]));
+      }
+    });
+
+    // Ajoute les titres
+    String[] titles = {"Temps (s)", "2AUFS", absorbancePe + "AUFS", "Changement de tube"};
+    entries.add(0, titles);
+
+    // Écrit le fichier en csv
+    try {
+      File output = new File(fullPath);
+      PrintWriter pw = new PrintWriter(output);
+      for (String[] entry : entries) {
+        List<String> entryList = Arrays.asList(entry);
+        String line = entryList.stream().collect(Collectors.joining(","));
+        pw.println(line);
+      }
+      pw.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Une erreur est survenue pendant la sauvegarde", "Erreur", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
     System.out.println("\u001B[36mDonnées exportées en CSV : " + fullPath + "\u001B[0m");
   }
 
@@ -165,17 +215,23 @@ final public class Gradient {
     String fileName = "GradientSave-" + startTime.format(format) + ".txt";
     String pathStr = saveFolder.getAbsolutePath() + File.separator + fileName;
 
+    // Copie les données
+    ArrayList<Data> datasCopy = new ArrayList<Data>();
+    ArrayList<Double> markersCopy = new ArrayList<Double>();
+    datasCopy.addAll(datas);
+    markersCopy.addAll(markerTimes);
+
     // Crée les lignes du fichier
     List<String> lines = new ArrayList<String>();
     lines.add("Collecteur de fractions (s) :");
-    for (int i = 0; i < markerTimes.size(); i++) {
-      lines.add(markerTimes.get(i).toString());
+    for (int i = 0; i < markersCopy.size(); i++) {
+      lines.add(markersCopy.get(i).toString());
     }
     lines.add("");
 
     lines.add("Données (s / 2AUFS / " + absorbancePe + "AUFS) :");
-    for (int i = 0; i < datas.size(); i++) {
-      lines.add(datas.get(i).toString());
+    for (int i = 0; i < datasCopy.size(); i++) {
+      lines.add(datasCopy.get(i).toString());
     }
 
     // Sauvegarde le fichier
