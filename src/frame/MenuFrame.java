@@ -35,6 +35,10 @@ public class MenuFrame extends AppFrame implements ActionListener {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
     initComponents();
+
+    if (!Config.defaultSaveDirectory.equals("")) {
+      setSaveFolder(Config.defaultSaveDirectory);
+    }
   }
 
   @Override
@@ -162,12 +166,12 @@ public class MenuFrame extends AppFrame implements ActionListener {
     if (max <= 4 || path.length() <= max) return path;
 
     while (path.length() > max - 4) {
-      String[] folders = path.split("/");
-      path = String.join("/", Arrays.copyOfRange(folders, 1, folders.length));
+      String[] folders = path.split(File.separator);
+      path = String.join(File.separator, Arrays.copyOfRange(folders, 1, folders.length));
       if (folders.length == 2) break;
     }
 
-    return ".../" + path;
+    return "..." + File.separator + path;
   }
 
   @Override
@@ -177,13 +181,17 @@ public class MenuFrame extends AppFrame implements ActionListener {
       folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       int response = folderChooser.showOpenDialog(null);
       if (response == JFileChooser.APPROVE_OPTION) {
-        File file = new File(folderChooser.getSelectedFile().getAbsolutePath());
-        String path = file.getPath();
-        // Raccourcit le chemin pour avoir moins de 20 caractères
-        path = reducePath(path, 20);
-        selectFolder.setText(path);
-        selectedSaveFolder = file;
+        setSaveFolder(folderChooser.getSelectedFile().getAbsolutePath());
       }
     }
+  }
+
+  private void setSaveFolder(String absolutePath) {
+    File file = new File(absolutePath);
+    String path = file.getPath();
+    // Raccourcit le chemin pour avoir moins de 20 caractères
+    path = reducePath(path, 20);
+    selectFolder.setText(path);
+    selectedSaveFolder = file;
   }
 }
