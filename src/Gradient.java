@@ -133,7 +133,7 @@ final public class Gradient {
     double retard = retardMs/1000d;
     double value = time - retard;
     if (numberOfTubes != 0) {
-      graph.addTextMark((value + lastTube)/2d, "Tube " + numberOfTubes);
+      graph.addTextMark((value + lastTube)/2d, String.valueOf(numberOfTubes));
     }
     graph.addMark(value);
     markerTimes.add(value);

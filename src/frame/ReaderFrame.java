@@ -78,7 +78,7 @@ public class ReaderFrame extends AppFrame {
           // Si c'est un changement de tube, on affiche les markers
           double value = Double.valueOf(line.get(0));
           if (numberOfTubes != 0) {
-            graph.addTextMark((value + lastTube)/2d, "Tube " + numberOfTubes);
+            graph.addTextMark((value + lastTube)/2d, String.valueOf(numberOfTubes));
           }
           graph.addMark(value);
           numberOfTubes++;
