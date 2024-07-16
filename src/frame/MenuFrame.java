@@ -165,6 +165,11 @@ public class MenuFrame extends AppFrame implements ActionListener {
   private String reducePath(String path, int max) {
     if (max <= 4 || path.length() <= max) return path;
 
+    if (!File.separator.equals("/")) {
+      String[] folders = path.split(File.separator);
+      return "...\\" + folders[folders.length-1];
+    }
+
     while (path.length() > max - 4) {
       String[] folders = path.split(File.separator);
       path = String.join(File.separator, Arrays.copyOfRange(folders, 1, folders.length));
