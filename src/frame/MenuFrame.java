@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Arrays;
+import java.lang.StringBuilder;
 
 public class MenuFrame extends AppFrame implements ActionListener {
   private JButton selectFolder;
@@ -166,8 +167,14 @@ public class MenuFrame extends AppFrame implements ActionListener {
     if (max <= 4 || path.length() <= max) return path;
 
     if (!File.separator.equals("/")) {
-      String[] folders = path.split(File.separator);
-      return "...\\" + folders[folders.length-1];
+      String lastFolder = "";
+      for (int i = path.length() - 1; i >= 0; i--) {
+        if (!String.valueOf(path.charAt(i)).equals(File.separator)) {
+          lastFolder += path.charAt(i);
+        } else break;
+      }
+      lastFolder = new StringBuilder(lastFolder).reverse().toString();
+      return "...\\" + lastFolder;
     }
 
     while (path.length() > max - 4) {
