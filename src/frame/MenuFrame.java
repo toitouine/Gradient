@@ -8,6 +8,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Font;
 import java.awt.Dimension;
 import java.awt.Color;
@@ -78,8 +79,19 @@ public class MenuFrame extends AppFrame implements ActionListener {
     titlePanel.add(title, new GridBagConstraints());
     add(titlePanel, BorderLayout.NORTH);
 
-    // Démarrer l'acquisition
+    // Lire un CSV
     JPanel startPanel = new JPanel();
+    JButton csvButton = new JButton();
+    startPanel.setPreferredSize(new Dimension(defaultWidth, 100));
+    csvButton.setText("Lire un CSV Gradient");
+    csvButton.addActionListener(e -> openCSV());
+    csvButton.setFocusable(true);
+    csvButton.setFont(new Font("", Font.PLAIN, 20));
+    csvButton.setMargin(new Insets(20, 10, 20, 10));
+    startPanel.add(csvButton);
+    add(startPanel, BorderLayout.SOUTH);
+
+    // Démarrer l'acquisition
     JButton button = new JButton();
     startPanel.setPreferredSize(new Dimension(defaultWidth, 100));
     button.setText("Démarrer l'acquisition");
@@ -92,6 +104,17 @@ public class MenuFrame extends AppFrame implements ActionListener {
 
     // Centre
     addCenterElements();
+  }
+
+  private void openCSV() {
+    JFileChooser fileChooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV", "csv", "CSV files");
+    fileChooser.setFileFilter(filter);
+    fileChooser.setAcceptAllFileFilterUsed(false);
+    int response = fileChooser.showOpenDialog(null);
+    if (response == JFileChooser.APPROVE_OPTION) {
+      application.readCSV(fileChooser.getSelectedFile());
+    }
   }
 
   private void refreshSelectPortList() {

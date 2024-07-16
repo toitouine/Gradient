@@ -3,6 +3,8 @@ import javax.swing.JLabel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.BorderLayout;
@@ -136,10 +138,20 @@ public class GraphFrame extends AppFrame {
     exportButton.addActionListener(e -> application.saveToCSV());
     exportButton.setMargin(new Insets(5, 5, 5, 5));
     exportButton.setFont(new Font("", Font.PLAIN, 16));
-    gbc.gridx = 1;
+    gbc.gridx = 2;
     gbc.gridy = 0;
     gbc.anchor = GridBagConstraints.EAST;
     top.add(exportButton, gbc);
+
+    toggle2Button = new JButton("Lire un CSV Gradient");
+    toggle2Button.setFocusable(false);
+    toggle2Button.addActionListener(e -> openCSV());
+    toggle2Button.setMargin(new Insets(5, 5, 5, 5));
+    toggle2Button.setFont(new Font("", Font.PLAIN, 16));
+    gbc.gridx = 2;
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.EAST;
+    top.add(toggle2Button, gbc);
 
     toggle2Button = new JButton("Masquer 2AUFS");
     toggle2Button.setFocusable(false);
@@ -147,11 +159,22 @@ public class GraphFrame extends AppFrame {
     toggle2Button.setMargin(new Insets(5, 5, 5, 5));
     toggle2Button.setFont(new Font("", Font.PLAIN, 16));
     gbc.gridx = 1;
-    gbc.gridy = 1;
-    gbc.anchor = GridBagConstraints.EAST;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.CENTER;
     top.add(toggle2Button, gbc);
 
     add(top, BorderLayout.NORTH);
     add(graph.getPanel(), BorderLayout.CENTER);
+  }
+
+  private void openCSV() {
+    JFileChooser fileChooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV", "csv", "CSV files");
+    fileChooser.setFileFilter(filter);
+    fileChooser.setAcceptAllFileFilterUsed(false);
+    int response = fileChooser.showOpenDialog(null);
+    if (response == JFileChooser.APPROVE_OPTION) {
+      application.readCSV(fileChooser.getSelectedFile());
+    }
   }
 }
