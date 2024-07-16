@@ -69,20 +69,7 @@ public class Serial {
 
     AtomicBoolean gotResponse = new AtomicBoolean(false);
 
-    // Timeout
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    executorService.schedule(() -> {
-      gotResponse.set(false);
-      synchronized(gotResponse) {
-        gotResponse.notify();
-      }
-    }, 2, TimeUnit.SECONDS);
-
-
-    // Ping
-    write(port, "p");
-
-    // Écoute la réponse
+    // Écoute une réponse
     port.addDataListener(new SerialPortDataListener() {
       @Override
       public int getListeningEvents() {
@@ -98,6 +85,19 @@ public class Serial {
         }
       }
     });
+
+    // Timeout
+    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    executorService.schedule(() -> {
+      gotResponse.set(false);
+      synchronized(gotResponse) {
+        gotResponse.notify();
+      }
+    }, 2, TimeUnit.SECONDS);
+
+
+    // Ping
+    write(port, "p");
 
     // Attend le retour (timeout ou réponse)
     synchronized (gotResponse) {
