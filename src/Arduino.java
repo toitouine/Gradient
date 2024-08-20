@@ -34,16 +34,24 @@ final public class Arduino {
 
       @Override
       public void serialEvent(SerialPortEvent event) {
-        String str = Serial.received(port, event);
-        if (str.charAt(0) == 'm') application.addMark(Double.parseDouble(str.substring(1)));
-        else if (str.charAt(0) == 'd') {
-          String data = str.substring(1);
-          double val2 = Double.parseDouble(data.split("/")[0]);
-          double valX = Double.parseDouble(data.split("/")[1]);
-          double maxValue = Math.pow(2, 16) - 1;
-          double valAbs2 = map(val2, 0, maxValue/3.3d, 0, 2);
-          double valAbsX = map(valX, 0, maxValue/3.3d, 0, pleineEchelle);
-          application.acquisition(valAbs2, valAbsX);
+        try {
+          String fullMessage = Serial.received(port, event);
+          String[] strs = fullMessage.split("(?<=[0-9])(?=[a-zA-Z])");
+          for (int i = 0; i < strs.length; i++) {
+            String str = strs[i];
+            if (str.charAt(0) == 'm') application.addMark(Double.parseDouble(str.substring(1)));
+            else if (str.charAt(0) == 'd') {
+              String data = str.substring(1);
+              double val2 = Double.parseDouble(data.split("/")[0]);
+              double valX = Double.parseDouble(data.split("/")[1]);
+              double maxValue = Math.pow(2, 16) - 1;
+              double valAbs2 = map(val2, 0, maxValue/3.3d, 0, 2);
+              double valAbsX = map(valX, 0, maxValue/3.3d, 0, pleineEchelle);
+              application.acquisition(valAbs2, valAbsX);
+            }
+          }
+        } catch (Exception e) {
+          System.out.println("ERREUR DANS LA LECTURE DE LA DERNIÈRE DONNÉE REÇUE");
         }
       }
     });
