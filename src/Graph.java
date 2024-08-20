@@ -83,6 +83,8 @@ public class Graph {
     series1.clear();
     series2.clear();
     chart.getXYPlot().clearDomainMarkers();
+    allMarkers.clear();
+    showMarkers = true;
   }
 
   public void add(double x, double y1, double y2) {

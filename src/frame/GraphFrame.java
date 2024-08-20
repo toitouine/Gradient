@@ -80,6 +80,7 @@ public class GraphFrame extends AppFrame {
 
   public void clear() {
     graph.clear();
+    updateButtons();
   }
 
   private void togglePause() {
