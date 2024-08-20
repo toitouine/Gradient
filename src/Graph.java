@@ -17,6 +17,7 @@ import java.awt.BasicStroke;
 import java.awt.Rectangle;
 import java.awt.Font;
 import java.util.Collection;
+import java.util.ArrayList;
 
 public class Graph {
 
@@ -24,6 +25,9 @@ public class Graph {
   final private XYSeries series1, series2;
   final private ChartPanel panel;
   final private JPanel jpanel;
+
+  private final ArrayList<ValueMarker> allMarkers = new ArrayList<ValueMarker>();
+  private boolean showMarkers = true;
 
   private float strokeWeight = 1.25f;
   private Color markerColor = Color.BLACK;
@@ -86,11 +90,29 @@ public class Graph {
     series2.add(x, y2);
   }
 
+  public void hideMakers() {
+    showMarkers = false;
+    chart.getXYPlot().clearDomainMarkers();
+  }
+
+  public void showMarkers() {
+    chart.getXYPlot().clearDomainMarkers();
+    for (ValueMarker vm : allMarkers) {
+      chart.getXYPlot().addDomainMarker(vm);
+    }
+    showMarkers = true;
+  }
+
+  public boolean areMarkersHidden() {
+    return !showMarkers;
+  }
+
   public void addMark(double x, Color mColor) {
     ValueMarker marker = new ValueMarker(x);
     marker.setPaint(mColor);
     marker.setStroke(new BasicStroke(strokeWeight/2f));
-    chart.getXYPlot().addDomainMarker(marker);
+    if (showMarkers) chart.getXYPlot().addDomainMarker(marker);
+    allMarkers.add(marker);
   }
 
   public void addMark(double x) {
@@ -106,7 +128,8 @@ public class Graph {
     marker.setLabelFont(new Font("", Font.PLAIN, 16));
     marker.setStroke(new BasicStroke(0));
     marker.setPaint(chart.getBackgroundPaint());
-    chart.getXYPlot().addDomainMarker(marker);
+    if (showMarkers) chart.getXYPlot().addDomainMarker(marker);
+    allMarkers.add(marker);
   }
 
   public JPanel getPanel() {

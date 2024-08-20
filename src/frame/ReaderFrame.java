@@ -15,6 +15,7 @@ import java.awt.GridBagConstraints;
 public class ReaderFrame extends AppFrame {
   private Graph graph;
   private JButton toggle2Button;
+  private JButton toggleFracButton;
 
   public ReaderFrame(Gradient app, File csvFile) {
     super(app, "Lecteur de CSV");
@@ -45,6 +46,19 @@ public class ReaderFrame extends AppFrame {
     gbc.gridy = 0;
     gbc.anchor = GridBagConstraints.WEST;
     top.add(toggle2Button, gbc);
+
+    toggleFracButton = new JButton("Masquer les fractions");
+    toggleFracButton.setFocusable(false);
+    toggleFracButton.addActionListener(e -> toggleFrac());
+    toggleFracButton.setMargin(new Insets(5, 5, 5, 5));
+    toggleFracButton.setFont(new Font("", Font.PLAIN, 16));
+    gbc.insets = new Insets(5, 10, 5, 10);
+    gbc.weightx = 1;
+    gbc.weighty = 1;
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.EAST;
+    top.add(toggleFracButton, gbc);
   }
 
   private void toggle2AUFS() {
@@ -53,6 +67,14 @@ public class ReaderFrame extends AppFrame {
 
     boolean is2Displayed = graph.isSeriesShowed(0);
     toggle2Button.setText((is2Displayed ? "Masquer" : "Afficher") + " 2AUFS");
+  }
+
+  private void toggleFrac() {
+    if (graph.areMarkersHidden()) graph.showMarkers();
+    else graph.hideMakers();
+
+    boolean markerDisplayed = !graph.areMarkersHidden();
+    toggleFracButton.setText((markerDisplayed ? "Masquer" : "Afficher") + " les fractions");
   }
 
   private void processCSV(File file) {

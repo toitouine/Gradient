@@ -19,6 +19,7 @@ public class GraphFrame extends AppFrame {
   private JButton menuButton;
   private JButton stopButton;
   private JButton toggle2Button;
+  private JButton toggleFracButton;
 
   public GraphFrame(Gradient app) {
     super(app, "Acquisition");
@@ -92,6 +93,12 @@ public class GraphFrame extends AppFrame {
     updateButtons();
   }
 
+  private void toggleFrac() {
+    if (graph.areMarkersHidden()) graph.showMarkers();
+    else graph.hideMakers();
+    updateButtons();
+  }
+
   private void updateButtons() {
     boolean paused = application.acquisitionPaused();
     menuButton.setEnabled(paused);
@@ -99,6 +106,9 @@ public class GraphFrame extends AppFrame {
 
     boolean is2Displayed = graph.isSeriesShowed(0);
     toggle2Button.setText((is2Displayed ? "Masquer" : "Afficher") + " 2AUFS");
+
+    boolean markerDisplayed = !graph.areMarkersHidden();
+    toggleFracButton.setText((markerDisplayed ? "Masquer" : "Afficher") + " les fractions");
   }
 
   private void initComponents() {
@@ -162,6 +172,16 @@ public class GraphFrame extends AppFrame {
     gbc.gridy = 0;
     gbc.anchor = GridBagConstraints.CENTER;
     top.add(toggle2Button, gbc);
+
+    toggleFracButton = new JButton("Masquer les fractions");
+    toggleFracButton.setFocusable(false);
+    toggleFracButton.addActionListener(e -> toggleFrac());
+    toggleFracButton.setMargin(new Insets(5, 5, 5, 5));
+    toggleFracButton.setFont(new Font("", Font.PLAIN, 16));
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    gbc.anchor = GridBagConstraints.CENTER;
+    top.add(toggleFracButton, gbc);
 
     add(top, BorderLayout.NORTH);
     add(graph.getPanel(), BorderLayout.CENTER);
