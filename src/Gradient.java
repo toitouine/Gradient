@@ -118,7 +118,17 @@ final public class Gradient {
 
     arduino.stopAcquisition();
 
-    if (datas.size() != 0 || markerTimes.size() != 0) sauvegarde();
+    if (datas.size() != 0 || markerTimes.size() != 0) {
+      try {
+        // Après l'acquisition, effectue des sauvegardes dans le dossier par défaut
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyy_HH'h'mm'm'ss's'");
+        String fileName = "GradientSaveCSV-" + startTime.format(format) + ".csv";
+        String csvSaveFullPath = saveFolder.getAbsolutePath() + File.separator + fileName;
+        csvSave(csvSaveFullPath);
+        sauvegarde();
+      } catch (Exception e) {
+      }
+    }
     datas.clear();
     markerTimes.clear();
 
@@ -181,6 +191,11 @@ final public class Gradient {
       }
     } while (Files.exists(Paths.get(fullPath)));
 
+    // Effectue la sauvegarde
+    csvSave(fullPath);
+  }
+
+  private void csvSave(String fullPath) {
     // Copie les données
     ArrayList<Data> datasCopy = new ArrayList<Data>();
     ArrayList<Double> markersCopy = new ArrayList<Double>();
