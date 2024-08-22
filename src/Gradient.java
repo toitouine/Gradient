@@ -49,6 +49,10 @@ final public class Gradient {
     menu.setVisible(true);
   }
 
+  public void openHelp() {
+    System.out.println("TODO openHelp()");
+  }
+
   public void readCSV(File file) {
     ReaderFrame reader = new ReaderFrame(this, file);
     reader.setVisible(true);

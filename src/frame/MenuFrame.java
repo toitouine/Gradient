@@ -172,6 +172,7 @@ public class MenuFrame extends AppFrame implements ActionListener {
     JLabel absText = new JLabel("Absorbance pleine échelle");
     absText.setFont(new Font("", Font.PLAIN, 17));
     selectAbs.setFocusable(true);
+    selectAbs.getModel().setSelectedItem(0.5d);
     adder.add(absText, 0, 2, GridBagConstraints.WEST);
     adder.add(selectAbs, 1, 2, GridBagConstraints.CENTER);
 

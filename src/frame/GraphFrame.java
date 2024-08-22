@@ -16,22 +16,24 @@ import java.awt.Color;
 
 public class GraphFrame extends AppFrame {
   private Graph graph;
+  private String abs = "XAUFS";
   private JButton menuButton;
   private JButton stopButton;
-  private JButton toggle2Button;
+  private JButton toggle2Button, toggleXButton;
   private JButton toggleFracButton;
 
   public GraphFrame(Gradient app) {
     super(app, "Acquisition");
-    graph = new Graph("", "Temps (s)", "Absorbance", "2AUFS", "XAUFS");
+    graph = new Graph("", "Temps (s)", "Absorbance", "2AUFS", abs);
     setSize((int)(defaultWidth*1.75), (int)(defaultHeight*1.75));
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     initComponents();
     setCloseConfirmation();
   }
 
-  public void setNameXAUFS(double abs) {
-    graph.setSeries2Name(abs + "AUFS");
+  public void setNameXAUFS(double a) {
+    abs = a + "AUFS";
+    graph.setSeries2Name(abs);
   }
 
   @Override
@@ -94,6 +96,12 @@ public class GraphFrame extends AppFrame {
     updateButtons();
   }
 
+  private void toggleXAUFS() {
+    if (graph.isSeriesShowed(1)) graph.hideSeries(1);
+    else graph.showSeries(1);
+    updateButtons();
+  }
+
   private void toggleFrac() {
     if (graph.areMarkersHidden()) graph.showMarkers();
     else graph.hideMakers();
@@ -108,6 +116,9 @@ public class GraphFrame extends AppFrame {
     boolean is2Displayed = graph.isSeriesShowed(0);
     toggle2Button.setText((is2Displayed ? "Masquer" : "Afficher") + " 2AUFS");
 
+    boolean isXDisplayed = graph.isSeriesShowed(1);
+    toggleXButton.setText((isXDisplayed ? "Masquer " : "Afficher ") + abs);
+
     boolean markerDisplayed = !graph.areMarkersHidden();
     toggleFracButton.setText((markerDisplayed ? "Masquer" : "Afficher") + " les fractions");
   }
@@ -116,8 +127,18 @@ public class GraphFrame extends AppFrame {
     setLayout(new BorderLayout());
 
     JPanel top = new JPanel();
+    JPanel topCenter = new JPanel();
+    JPanel topCenterBottom = new JPanel();
     GridBagConstraints gbc = new GridBagConstraints();
     top.setLayout(new GridBagLayout());
+    topCenter.setLayout(new GridBagLayout());
+    topCenterBottom.setLayout(new GridBagLayout());
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    top.add(topCenter, gbc);
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    top.add(topCenterBottom, gbc);
 
     gbc.insets = new Insets(5, 10, 5, 10);
     gbc.weightx = 1;
@@ -154,35 +175,55 @@ public class GraphFrame extends AppFrame {
     gbc.anchor = GridBagConstraints.EAST;
     top.add(exportButton, gbc);
 
-    toggle2Button = new JButton("Lire un CSV Gradient");
-    toggle2Button.setFocusable(false);
-    toggle2Button.addActionListener(e -> openCSV());
-    toggle2Button.setMargin(new Insets(5, 5, 5, 5));
-    toggle2Button.setFont(new Font("", Font.PLAIN, 16));
+    JButton csvButton = new JButton("Lire un CSV Gradient");
+    csvButton.setFocusable(false);
+    csvButton.addActionListener(e -> openCSV());
+    csvButton.setMargin(new Insets(5, 5, 5, 5));
+    csvButton.setFont(new Font("", Font.PLAIN, 16));
     gbc.gridx = 2;
     gbc.gridy = 1;
     gbc.anchor = GridBagConstraints.EAST;
-    top.add(toggle2Button, gbc);
+    top.add(csvButton, gbc);
 
     toggle2Button = new JButton("Masquer 2AUFS");
     toggle2Button.setFocusable(false);
     toggle2Button.addActionListener(e -> toggle2AUFS());
     toggle2Button.setMargin(new Insets(5, 5, 5, 5));
     toggle2Button.setFont(new Font("", Font.PLAIN, 16));
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.CENTER;
+    topCenter.add(toggle2Button, gbc);
+
+    toggleXButton = new JButton("Masquer" + abs);
+    toggleXButton.setFocusable(false);
+    toggleXButton.addActionListener(e -> toggleXAUFS());
+    toggleXButton.setMargin(new Insets(5, 5, 5, 5));
+    toggleXButton.setFont(new Font("", Font.PLAIN, 16));
     gbc.gridx = 1;
     gbc.gridy = 0;
     gbc.anchor = GridBagConstraints.CENTER;
-    top.add(toggle2Button, gbc);
+    topCenter.add(toggleXButton, gbc);
 
     toggleFracButton = new JButton("Masquer les fractions");
     toggleFracButton.setFocusable(false);
     toggleFracButton.addActionListener(e -> toggleFrac());
     toggleFracButton.setMargin(new Insets(5, 5, 5, 5));
     toggleFracButton.setFont(new Font("", Font.PLAIN, 16));
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.WEST;
+    topCenterBottom.add(toggleFracButton, gbc);
+
+    JButton helpButton = new JButton("Ouvrir l'aide");
+    helpButton.setFocusable(false);
+    helpButton.addActionListener(e -> application.openHelp());
+    helpButton.setMargin(new Insets(5, 5, 5, 5));
+    helpButton.setFont(new Font("", Font.PLAIN, 16));
     gbc.gridx = 1;
-    gbc.gridy = 1;
-    gbc.anchor = GridBagConstraints.CENTER;
-    top.add(toggleFracButton, gbc);
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.EAST;
+    topCenterBottom.add(helpButton, gbc);
 
     add(top, BorderLayout.NORTH);
     add(graph.getPanel(), BorderLayout.CENTER);

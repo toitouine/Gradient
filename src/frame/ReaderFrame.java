@@ -14,7 +14,8 @@ import java.awt.GridBagConstraints;
 
 public class ReaderFrame extends AppFrame {
   private Graph graph;
-  private JButton toggle2Button;
+  private String abs = "XAUFS";
+  private JButton toggle2Button, toggleXButton;
   private JButton toggleFracButton;
 
   public ReaderFrame(Gradient app, File csvFile) {
@@ -29,10 +30,15 @@ public class ReaderFrame extends AppFrame {
     // GUI
     setLayout(new BorderLayout());
     JPanel top = new JPanel();
+    JPanel topLeft = new JPanel();
     GridBagConstraints gbc = new GridBagConstraints();
     top.setLayout(new GridBagLayout());
+    topLeft.setLayout(new GridBagLayout());
     add(top, BorderLayout.NORTH);
     add(graph.getPanel(), BorderLayout.CENTER);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    top.add(topLeft, gbc);
 
     toggle2Button = new JButton("Masquer 2AUFS");
     toggle2Button.setFocusable(false);
@@ -45,7 +51,20 @@ public class ReaderFrame extends AppFrame {
     gbc.gridx = 0;
     gbc.gridy = 0;
     gbc.anchor = GridBagConstraints.WEST;
-    top.add(toggle2Button, gbc);
+    topLeft.add(toggle2Button, gbc);
+
+    toggleXButton = new JButton("Masquer " + abs);
+    toggleXButton.setFocusable(false);
+    toggleXButton.addActionListener(e -> toggleXAUFS());
+    toggleXButton.setMargin(new Insets(5, 5, 5, 5));
+    toggleXButton.setFont(new Font("", Font.PLAIN, 16));
+    gbc.insets = new Insets(5, 10, 5, 10);
+    gbc.weightx = 1;
+    gbc.weighty = 1;
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.CENTER;
+    topLeft.add(toggleXButton, gbc);
 
     toggleFracButton = new JButton("Masquer les fractions");
     toggleFracButton.setFocusable(false);
@@ -55,10 +74,23 @@ public class ReaderFrame extends AppFrame {
     gbc.insets = new Insets(5, 10, 5, 10);
     gbc.weightx = 1;
     gbc.weighty = 1;
+    gbc.gridx = 2;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.EAST;
+    topLeft.add(toggleFracButton, gbc);
+
+    JButton helpButton = new JButton("Ouvrir l'aide");
+    helpButton.setFocusable(false);
+    helpButton.addActionListener(e -> application.openHelp());
+    helpButton.setMargin(new Insets(5, 5, 5, 5));
+    helpButton.setFont(new Font("", Font.PLAIN, 16));
+    gbc.insets = new Insets(5, 10, 5, 10);
+    gbc.weightx = 1;
+    gbc.weighty = 1;
     gbc.gridx = 1;
     gbc.gridy = 0;
     gbc.anchor = GridBagConstraints.EAST;
-    top.add(toggleFracButton, gbc);
+    top.add(helpButton, gbc);
   }
 
   private void toggle2AUFS() {
@@ -67,6 +99,14 @@ public class ReaderFrame extends AppFrame {
 
     boolean is2Displayed = graph.isSeriesShowed(0);
     toggle2Button.setText((is2Displayed ? "Masquer" : "Afficher") + " 2AUFS");
+  }
+
+  private void toggleXAUFS() {
+    if (graph.isSeriesShowed(1)) graph.hideSeries(1);
+    else graph.showSeries(1);
+
+    boolean isXDisplayed = graph.isSeriesShowed(1);
+    toggleXButton.setText((isXDisplayed ? "Masquer " : "Afficher ") + abs);
   }
 
   private void toggleFrac() {
@@ -87,7 +127,8 @@ public class ReaderFrame extends AppFrame {
       }
 
       // Récupère l'absorbance pleine échelle
-      graph.setSeries2Name(records.get(0).get(2));
+      abs = records.get(0).get(2);
+      graph.setSeries2Name(abs);
 
       // Affiche les données
       int numberOfTubes = 0;
@@ -109,13 +150,14 @@ public class ReaderFrame extends AppFrame {
         else {
           // Sinon on enregistre les données
           double valueAbs2 = Double.valueOf(line.get(1));
-          double valueAbsX = Double.valueOf(line.get(2 ));
+          double valueAbsX = Double.valueOf(line.get(2));
           graph.add(Double.valueOf(line.get(0)), valueAbs2, valueAbsX);
         }
       }
 
     } catch (Exception e) {
-      e.printStackTrace();
+      abs = "XAUFS";
+      graph.setSeries2Name(abs);
       JOptionPane.showMessageDialog(null, "Erreur dans la lecture du fichier. Vérifiez qu'il s'agit bien d'un csv gradient.", "Erreur", JOptionPane.ERROR_MESSAGE);
     }
   }
