@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 final public class Gradient {
   private final MenuFrame menu;
   private final GraphFrame graph;
+  private final HelpFrame help;
 
   // Acquisition
   public boolean inAcquisition = false;
@@ -38,6 +39,7 @@ final public class Gradient {
   public Gradient() {
     menu = new MenuFrame(this);
     graph = new GraphFrame(this);
+    help = new HelpFrame(this);
     datas = new ArrayList<Data>();
     markerTimes = new ArrayList<Double>();
   }
@@ -50,7 +52,7 @@ final public class Gradient {
   }
 
   public void openHelp() {
-    System.out.println("TODO openHelp()");
+    help.setVisible(true);
   }
 
   public void readCSV(File file) {
