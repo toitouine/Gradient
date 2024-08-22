@@ -1,15 +1,8 @@
-import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.File;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Color;
-import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.Font;
